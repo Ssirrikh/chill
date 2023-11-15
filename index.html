@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset = utf-8>
+	<title>Chill Vibes</title>
+	<style>
+		* {
+			margin: 0px;
+			padding: 0px;
+			box-sizing: border-box;
+		}
+		body {
+			white-space: pre;
+		}
+	</style>
+</head>
+<body>
+
+<script type="text/javascript" src="music/resources.js"></script>
+
+<script type="text/javascript">
+
+	class AudioPlayer {
+		constructor (tracklist) {
+			this.player = document.createElement('audio');
+			this.nowPlaying = 0;
+			this.tracklist = tracklist.map(x => x);
+			this.shuffleOrder = [];
+		}
+		get shuffled () { return this.shuffleOrder.length != 0; }
+		get currentTrack () { return this.tracklist[ this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying ]; }
+		setSrc (src) {
+			this.player.pause();
+			this.player.src = src;
+			return this;
+		}
+		play () {
+			this.player.play();
+			return this;
+		}
+		pause () {
+			this.player.pause();
+			return this;
+		}
+		next () {
+			this.nowPlaying = (this.nowPlaying + 1) % this.tracklist.length;
+			const track = this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying;
+			this.setSrc(this.tracklist[track].path);
+			// this.player.play();
+			return this;
+		}
+		prev () {
+			this.nowPlaying = (this.nowPlaying - 1 + this.tracklist.length) % this.tracklist.length;
+			const track = this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying;
+			this.setSrc(this.tracklist[track].path);
+			// this.player.play();
+			return this;
+		}
+		shuffle () {
+			this.shuffleOrder = this.tracklist.map( (x,i) => i ).sort( () => Math.random() - 0.5 );
+			return this;
+		}
+		unshuffle () {
+			this.nowPlaying = this.shuffleOrder[this.nowPlaying];
+			this.shuffleOrder = [];
+			return this;
+		}
+
+		get domStr () {
+			let s = '';
+
+			for (let i = 0; i < this.tracklist.length; i++) {
+				const track = this.shuffled ? this.shuffleOrder[i] : i;
+				s += (i == this.nowPlaying) ? '>>' : '  ';
+				s += ' ' + track;
+				s += ' ' + this.tracklist[track].composer + ' - ' + this.tracklist[track].title;
+				s += '\n';
+			}
+
+			return s;
+		}
+		update () {
+			document.body.innerHTML = this.domStr;
+		}
+	}
+	
+	let musicPlayer = new AudioPlayer(resources);
+
+	musicPlayer.update();
+
+</script>
+
+</body>
+</html>
