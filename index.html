@@ -46,18 +46,21 @@
 			this.nowPlaying = (this.nowPlaying + 1) % this.tracklist.length;
 			const track = this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying;
 			this.setSrc(this.tracklist[track].path);
-			// this.player.play();
 			return this;
 		}
 		prev () {
 			this.nowPlaying = (this.nowPlaying - 1 + this.tracklist.length) % this.tracklist.length;
 			const track = this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying;
 			this.setSrc(this.tracklist[track].path);
-			// this.player.play();
 			return this;
 		}
 		shuffle () {
-			this.shuffleOrder = this.tracklist.map( (x,i) => i ).sort( () => Math.random() - 0.5 );
+			this.shuffleOrder = this.tracklist.map( (x,i) => i );
+			// Durstenfeld shuffle in O(n)
+			for (let i = this.shuffleOrder.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[this.shuffleOrder[i], this.shuffleOrder[j]] = [this.shuffleOrder[j], this.shuffleOrder[i]];
+			}
 			return this;
 		}
 		unshuffle () {
