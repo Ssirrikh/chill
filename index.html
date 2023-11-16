@@ -29,12 +29,17 @@
 		}
 		get shuffled () { return this.shuffleOrder.length != 0; }
 		get currentTrack () { return this.tracklist[ this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying ]; }
+		get paused () { return this.player.paused; }
 		setSrc (src) {
 			this.player.pause();
-			this.player.src = src;
+			this.player.src = 'music/' + src;
 			return this;
 		}
 		play () {
+			if (this.player.currentSrc == '') {
+				const track = this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying;
+				this.setSrc(this.tracklist[track].path);
+			}
 			this.player.play();
 			return this;
 		}
@@ -43,15 +48,19 @@
 			return this;
 		}
 		next () {
+			const wasPaused = this.paused;
 			this.nowPlaying = (this.nowPlaying + 1) % this.tracklist.length;
 			const track = this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying;
 			this.setSrc(this.tracklist[track].path);
+			if (!wasPaused) this.play();
 			return this;
 		}
 		prev () {
+			const wasPaused = this.paused;
 			this.nowPlaying = (this.nowPlaying - 1 + this.tracklist.length) % this.tracklist.length;
 			const track = this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying;
 			this.setSrc(this.tracklist[track].path);
+			if (!wasPaused) this.play();
 			return this;
 		}
 		shuffle () {
@@ -72,6 +81,9 @@
 		get domStr () {
 			let s = '';
 
+			s += '[k] play/pause\n[j] prev\n[l] next\n\n';
+			s += this.paused ? 'PAUSED\n\n' : 'PLAYING\n\n';
+
 			for (let i = 0; i < this.tracklist.length; i++) {
 				const track = this.shuffled ? this.shuffleOrder[i] : i;
 				s += (i == this.nowPlaying) ? '>>' : '  ';
@@ -86,6 +98,16 @@
 			document.body.innerHTML = this.domStr;
 		}
 	}
+
+	document.body.addEventListener('keydown', e => {
+		switch (e.key) {
+		case 'k': // play/pause
+			musicPlayer.paused ? musicPlayer.play().update() : musicPlayer.pause().update();
+			break;
+		case 'j': musicPlayer.prev().update(); break; // prev
+		case 'l': musicPlayer.next().update(); break; // next
+		}
+	});
 	
 	let musicPlayer = new AudioPlayer(resources);
 
