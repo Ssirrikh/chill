@@ -1,4 +1,4 @@
-let resources = [
+let musicResources = [
 	{ path: "playlist-00/Ever So Blue - Progress.mp3", composer: "Ever So Blue", title: "Progress" },
 	{ path: "playlist-00/Jakob Ahlbom - Distant Echo.mp3", composer: "Jakob Ahlbom", title: "Distant Echo" },
 	{ path: "playlist-00/Jakob Ahlbom - Endeavour.mp3", composer: "Jakob Ahlbom", title: "Endeavour" },

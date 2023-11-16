@@ -19,6 +19,6 @@ for (dirpath, dirnames, filenames) in os.walk(WORKING_DIRECTORY):
 print('Scanned ' + str(len(files)) + ' files')
 
 with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-    f.write('let resources = [\n\t')
+    f.write('let imageResources = [\n\t')
     f.write(',\n\t'.join(files))
     f.write('\n];')

@@ -8,14 +8,49 @@
 			margin: 0px;
 			padding: 0px;
 			box-sizing: border-box;
+			font-family: 'Calibri';
 		}
 		body {
 			white-space: pre;
+			color: #fefefe;
+			background-color: #222b28;
+			width: 100vw;
+			height: 100vh;
+		}
+		/* first left:__; spacings for original img, top-left to bottom-right flow */
+		/* second left:__; spacings for flipped img, centered top to bottom flow */
+		.welcome-text {
+			position: absolute;
+			top: 4vw;
+			left: 12vw;
+/*			left: 28vw;*/
+			font-size: 6vw;
+			filter: drop-shadow(0 0 1px #444);
+		}
+		.selection-text {
+			position: absolute;
+			top: 27vw;
+			left: 24vw;
+/*			left: 27vw;*/
+			font-size: 2.5vw;
+			filter: drop-shadow(0 0 1px #444);
+		}
+		.selection-box {
+			border-bottom: 2px solid #fefefe;
+
+			position: absolute;
+			padding: 0 1vw;
+			top: 27.5vw;
+			left: 53vw;
+/*			left: 56vw;*/
+			font-size: 2vw;
+			filter: drop-shadow(0 0 1px #444);
 		}
 	</style>
 </head>
 <body>
 
+<script type="text/javascript" src="images/resources.js"></script>
 <script type="text/javascript" src="music/resources.js"></script>
 
 <script type="text/javascript">
@@ -144,6 +179,45 @@
 
 	///////////////////
 
+	function loadWelcomeScreen (bgImgId = 0) {
+		document.body.innerHTML = '';
+
+		document.body.style.background = 'url("images/' + imageResources[bgImgId].path + '") no-repeat center center fixed';
+		document.body.style.backgroundSize = 'cover';
+
+		let welcomeText = document.createElement('div');
+		welcomeText.classList.add('welcome-text');
+		welcomeText.innerHTML = 'Hello, there.\n   Ready to Chill?';
+		document.body.appendChild(welcomeText);
+
+		let selectionText = document.createElement('div');
+		selectionText.classList.add('selection-text');
+		selectionText.innerHTML = 'Pick a soundscape to begin:';
+		document.body.appendChild(selectionText);
+
+		let selectionBox = document.createElement('div');
+		selectionBox.classList.add('selection-box');
+		selectionBox.innerHTML = 'Cozy Campfire';
+		document.body.appendChild(selectionBox);
+	}
+
+	function updateBackground (e) {
+		const maxOffset = 20;
+		// responsive scale
+		const minWidth = window.innerWidth + maxOffset;
+		const minHeight = window.innerHeight + maxOffset;
+		document.body.style.backgroundSize = (window.innerWidth > window.innerHeight) ? minWidth+'px auto' : 'auto '+minHeight+'px';
+		// parallax effect
+		const dx = -maxOffset * e.clientX/window.innerWidth;
+		const dy = -maxOffset * e.clientY/window.innerHeight;
+		document.body.style.backgroundPosition = dx + 'px ' + dy + 'px';
+	}
+
+	document.body.addEventListener('mousemove', updateBackground);
+	document.body.addEventListener('resize', updateBackground);
+
+	//////////////////
+
 	document.body.addEventListener('keydown', e => {
 		switch (e.key) {
 		case 'k': // play/pause
@@ -164,8 +238,9 @@
 		requestAnimationFrame(animate);
 	}
 	
-	let musicPlayer = new AudioPlayer(resources);
-	animate();
+	// let musicPlayer = new AudioPlayer(musicResources);
+	loadWelcomeScreen(0);
+	// animate();
 
 </script>
 
