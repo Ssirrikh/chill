@@ -32,13 +32,15 @@
 				if (!this.repeat)
 					this.next();
 				this.player.currentTime = 0;
-				this.update();
+				this.play().update();
 			});
 		}
 		get paused () { return this.player.paused; }
 		get shuffled () { return this.shuffleOrder.length != 0; }
 		get repeating () { return this.player.loop; }
 		get currentTrack () { return this.tracklist[ this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying ]; }
+		get currentTime () { return this.player.currentTime; }
+		get duration () { return this.player.duration; }
 		setSrc (src) {
 			this.player.pause();
 			this.player.src = 'music/' + src;
@@ -92,8 +94,19 @@
 		get domStr () {
 			let s = '';
 
-			s += '[k] play/pause\n[j] prev\n[l] next\n\n';
-			s += this.paused ? 'PAUSED\n\n' : 'PLAYING\n\n';
+			s += '[k] play/pause\n';
+			s += '[j] prev\n';
+			s += '[l] next\n';
+			s += '[m] mute\n';
+			s += '[r] repeat current track\n';
+			s += '[s] shuffle tracks\n';
+			s += '[Shift]+[s] turn off shuffle\n';
+			s += '\n';
+
+			s += this.paused ? 'PAUSED' : 'PLAYING';
+			s += this.player.muted ? ', MUTED' : '';
+			s += this.repeat ? ', REPEAT CURRENT' : '';
+			s += '\n\n';
 
 			for (let i = 0; i < this.tracklist.length; i++) {
 				const track = this.shuffled ? this.shuffleOrder[i] : i;
@@ -119,8 +132,8 @@
 			break;
 		case 'j': musicPlayer.prev().update(); break; // prev
 		case 'l': musicPlayer.next().update(); break; // next
-		case 'm': musicPlayer.player.muted = !musicPlayer.player.muted; break; // toggle mute
-		case 'r': musicPlayer.repeating = !musicPlayer.repeating; break; // toggle repeat
+		case 'm': musicPlayer.player.muted = !musicPlayer.player.muted; musicPlayer.update(); break; // toggle mute
+		case 'r': musicPlayer.repeat = !musicPlayer.repeat; musicPlayer.update(); break; // toggle repeat
 		case 's': musicPlayer.shuffle().update(); break; // shuffle
 		case 'S': musicPlayer.unshuffle().update(); break; // unshuffle
 		}
