@@ -28,6 +28,9 @@
 			this.tracklist = tracklist.map(x => x);
 			this.shuffleOrder = [];
 
+			// this.seekBar = document.createElement()
+
+			// autoplay
 			this.player.addEventListener('ended', () => {
 				if (!this.repeat)
 					this.next();
@@ -91,6 +94,17 @@
 			return this;
 		}
 
+		get timeStr () {
+			const currentSeconds = Math.floor(this.currentTime % 60);
+			const currentMinutes = Math.floor((this.currentTime-currentSeconds) / 60);
+			return String(currentMinutes).padStart(2,'0') + ':' + String(currentSeconds).padStart(2,'0');
+		}
+		get durationStr () {
+			if (!this.duration) return '00:00';
+			const durationSeconds = Math.floor(this.duration % 60);
+			const durationMinutes = Math.floor((this.duration-durationSeconds) / 60);
+			return String(durationMinutes).padStart(2,'0') + ':' + String(durationSeconds).padStart(2,'0');
+		}
 		get domStr () {
 			let s = '';
 
@@ -106,6 +120,11 @@
 			s += this.paused ? 'PAUSED' : 'PLAYING';
 			s += this.player.muted ? ', MUTED' : '';
 			s += this.repeat ? ', REPEAT CURRENT' : '';
+			s += '\n\n';
+
+			const seek = 'musicPlayer.player.fastSeek(document.getElementById("timeSlider").value/100 * musicPlayer.duration)';
+			s += `<input type = 'range' min = '0' max = '100' value = '0' step = '0.01' class = 'slider' id = 'timeSlider' oninput = '` + seek + `'>  `;
+			s += this.timeStr + ' / ' + this.durationStr;
 			s += '\n\n';
 
 			for (let i = 0; i < this.tracklist.length; i++) {
@@ -138,10 +157,15 @@
 		case 'S': musicPlayer.unshuffle().update(); break; // unshuffle
 		}
 	});
+
+	function animate () {
+		musicPlayer.update();
+		document.getElementById('timeSlider').value = (100 * musicPlayer.currentTime/musicPlayer.duration) || 0;
+		requestAnimationFrame(animate);
+	}
 	
 	let musicPlayer = new AudioPlayer(resources);
-
-	musicPlayer.update();
+	animate();
 
 </script>
 
