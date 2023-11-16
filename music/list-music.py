@@ -12,7 +12,7 @@ for (dirpath, dirnames, filenames) in os.walk(WORKING_DIRECTORY):
     DIRECTORY_PATH = dirpath.replace(WORKING_DIRECTORY,'')
     for filename in filenames:
         FILE_PATH = (DIRECTORY_PATH + '\\' + filename).replace('\\','/')[1:] # [1:] to remove initial '/'
-        if FILE_PATH != 'list-files.py' and FILE_PATH != OUTPUT_FILE:
+        if FILE_PATH != 'list-music.py' and FILE_PATH != OUTPUT_FILE:
             FILE_INFO = FILE_PATH.split('/').pop().split(' - ')
             files.append('{ path: "' + FILE_PATH + '", composer: "' + FILE_INFO[0] + '", title: "' + FILE_INFO[1].split('.')[0] + '" }')
 

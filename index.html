@@ -23,13 +23,22 @@
 	class AudioPlayer {
 		constructor (tracklist) {
 			this.player = document.createElement('audio');
+			this.repeat = false;
 			this.nowPlaying = 0;
 			this.tracklist = tracklist.map(x => x);
 			this.shuffleOrder = [];
+
+			this.player.addEventListener('ended', () => {
+				if (!this.repeat)
+					this.next();
+				this.player.currentTime = 0;
+				this.update();
+			});
 		}
-		get shuffled () { return this.shuffleOrder.length != 0; }
-		get currentTrack () { return this.tracklist[ this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying ]; }
 		get paused () { return this.player.paused; }
+		get shuffled () { return this.shuffleOrder.length != 0; }
+		get repeating () { return this.player.loop; }
+		get currentTrack () { return this.tracklist[ this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying ]; }
 		setSrc (src) {
 			this.player.pause();
 			this.player.src = 'music/' + src;
@@ -64,12 +73,14 @@
 			return this;
 		}
 		shuffle () {
+			const lastTrack = this.shuffled ? this.shuffleOrder[this.nowPlaying] : this.nowPlaying;
 			this.shuffleOrder = this.tracklist.map( (x,i) => i );
 			// Durstenfeld shuffle in O(n)
 			for (let i = this.shuffleOrder.length - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * (i + 1));
 				[this.shuffleOrder[i], this.shuffleOrder[j]] = [this.shuffleOrder[j], this.shuffleOrder[i]];
 			}
+			this.nowPlaying = this.shuffleOrder.indexOf(lastTrack);
 			return this;
 		}
 		unshuffle () {
@@ -87,7 +98,7 @@
 			for (let i = 0; i < this.tracklist.length; i++) {
 				const track = this.shuffled ? this.shuffleOrder[i] : i;
 				s += (i == this.nowPlaying) ? '>>' : '  ';
-				s += ' ' + track;
+				s += ' ' + String(track+1).padStart(2,'0');
 				s += ' ' + this.tracklist[track].composer + ' - ' + this.tracklist[track].title;
 				s += '\n';
 			}
@@ -99,6 +110,8 @@
 		}
 	}
 
+	///////////////////
+
 	document.body.addEventListener('keydown', e => {
 		switch (e.key) {
 		case 'k': // play/pause
@@ -106,6 +119,10 @@
 			break;
 		case 'j': musicPlayer.prev().update(); break; // prev
 		case 'l': musicPlayer.next().update(); break; // next
+		case 'm': musicPlayer.player.muted = !musicPlayer.player.muted; break; // toggle mute
+		case 'r': musicPlayer.repeating = !musicPlayer.repeating; break; // toggle repeat
+		case 's': musicPlayer.shuffle().update(); break; // shuffle
+		case 'S': musicPlayer.unshuffle().update(); break; // unshuffle
 		}
 	});
 	
