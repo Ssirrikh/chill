@@ -43,6 +43,7 @@
 			top: 27.5vw;
 			left: 53vw;
 /*			left: 56vw;*/
+			text-align: center;
 			font-size: 2vw;
 			filter: drop-shadow(0 0 1px #444);
 		}
@@ -177,6 +178,13 @@
 		}
 	}
 
+	class ParticleSystem {
+		constructor (spriteUrl) {
+			this.sprite = document.createElement('img');
+			this.particles = [];
+		}
+	}
+
 	///////////////////
 
 	function loadWelcomeScreen (bgImgId = 0) {
@@ -200,6 +208,9 @@
 		selectionBox.innerHTML = 'Cozy Campfire';
 		document.body.appendChild(selectionBox);
 	}
+	function loadMusicPlayer () {
+		musicPlayer.update();
+	}
 
 	function updateBackground (e) {
 		const maxOffset = 20;
@@ -213,8 +224,8 @@
 		document.body.style.backgroundPosition = dx + 'px ' + dy + 'px';
 	}
 
-	document.body.addEventListener('mousemove', updateBackground);
-	document.body.addEventListener('resize', updateBackground);
+	// document.body.addEventListener('mousemove', updateBackground);
+	// document.body.addEventListener('resize', updateBackground);
 
 	//////////////////
 
@@ -238,9 +249,9 @@
 		requestAnimationFrame(animate);
 	}
 	
-	// let musicPlayer = new AudioPlayer(musicResources);
-	loadWelcomeScreen(0);
-	// animate();
+	let musicPlayer = new AudioPlayer(musicResources);
+	loadWelcomeScreen(2);
+	animate();
 
 </script>
 
