@@ -14,7 +14,8 @@ for (dirpath, dirnames, filenames) in os.walk(WORKING_DIRECTORY):
         FILE_PATH = (DIRECTORY_PATH + '\\' + filename).replace('\\','/')[1:] # [1:] to remove initial '/'
         if FILE_PATH != 'list-images.py' and FILE_PATH != OUTPUT_FILE:
             FILE_INFO = FILE_PATH.split('/').pop().split(' - ')
-            files.append('{ path: "' + FILE_PATH + '", artist: "' + FILE_INFO[0] + '", title: "' + FILE_INFO[1] + '", source: "' + FILE_INFO[2].split('.')[0] + '" }')
+            # files.append('{ path: "' + FILE_PATH + '", artist: "' + FILE_INFO[0] + '", title: "' + FILE_INFO[1] + '", source: "' + FILE_INFO[2].split('.')[0] + '" }')
+            files.append('{ path: "' + FILE_PATH + '", artist: "' + FILE_INFO[0] + '", title: "' + FILE_INFO[1] + '" }')
 
 print('Scanned ' + str(len(files)) + ' files')
 
