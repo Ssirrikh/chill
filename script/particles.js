@@ -1,3 +1,4 @@
+
 function randInt(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -116,17 +117,40 @@ class ParticleSystem {
 			particle.domElement.style.top = particle.y + 'px';
 		}
 	}
+	correctTimeskip (dt) {
+		for (let particle of this.particles) {
+			particle.animStart += dt;
+		}
+	}
 }
+
+////////////////////////////
+
+// const MIN_TIMESKIP = 2 * (1000/60); // if we miss an entire frame @ 60 fps, correct for it
+// let lastFrame = performance.now();
+// let dt;
+
 
 // let bg = new ParticleSystem(150, SNOW_BG);
 // let fg = new ParticleSystem(30, SNOW_FG);
-let bg = new ParticleSystem(500, RAIN_BG);
-let fg = new ParticleSystem(100, RAIN_FG);
-function render () {
-	requestAnimationFrame(render);
-	bg.update();
-	fg.update();
-}
-render();
+// // let bg = new ParticleSystem(500, RAIN_BG);
+// // let fg = new ParticleSystem(100, RAIN_FG);
+// function render () {
+
+// 	requestAnimationFrame(render);
+
+// 	// 
+// 	dt = performance.now()-lastFrame;
+// 	if (dt > MIN_TIMESKIP) {
+// 		bg.correctTimeskip(dt);
+// 		fg.correctTimeskip(dt);
+// 	}
+
+// 	bg.update();
+// 	fg.update();
+
+// 	lastFrame = performance.now();
+// }
+// render();
 
 
