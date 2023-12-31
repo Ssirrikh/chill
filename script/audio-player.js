@@ -1,8 +1,8 @@
 
-class AmbianceChannel {
-	constructor (src) {
-		this.crossfadeLength = 5.0;
-		this.crossfadeStart = -1;
+class LoopChannel {
+	constructor (src, crossfadeLength = 5.0) {
+		this.crossfadeLength = crossfadeLength; // in seconds
+		// this.crossfadeStart = -1;
 
 		this.currentPlayer = 0;
 		this.players = [
@@ -29,16 +29,26 @@ class AmbianceChannel {
 		this.players[1].pause();
 	}
 	tick () {
-		// const primaryPlayer = this.players[this.currentPlayer];
-		// const secondaryPlayer = this.players[this.currentPlayer == 0 ? 1 : 0];
-		// if (primaryPlayer.currentTime < this.crossfadeLength || primaryPlayer.currentTime > primaryPlayer.duration-this.crossfadeLength)
-
-		if (this.players[0].currentTime < this.crossfadeLength) {
-			this.players[0].volume = this.players[0].currentTime / this.crossfadeLength; // fade in
-		} else if (this.players[0].currentTime > this.players[0].duration - this.crossfadeLength) {
-			this.players[0].volume = (this.players[0].duration-this.players[0].currentTime) / this.crossfadeLength; // fade out
-		} else {
-			this.players[0].volume = 1;
+		// adjust crossfade volume
+		for (let i of [0,1]) {
+			if (this.players[i].currentTime < this.crossfadeLength) {
+				this.players[i].volume = this.players[i].currentTime / this.crossfadeLength; // fade in
+			} else if (this.players[i].currentTime > this.players[i].duration - this.crossfadeLength) {
+				this.players[i].volume = (this.players[i].duration-this.players[i].currentTime) / this.crossfadeLength; // fade out
+			} else {
+				this.players[i].volume = 1;
+			}
+		}
+		// try trigger crossfade
+		if (this.currentPlayer == 0 && this.players[0].currentTime > this.players[0].duration - this.crossfadeLength && this.players[1].paused) {
+			this.currentPlayer = 1;
+			this.players[1].currentTime = 0;
+			this.players[1].play();
+		}
+		if (this.currentPlayer == 1 && this.players[1].currentTime > this.players[1].duration - this.crossfadeLength && this.players[0].paused) {
+			this.currentPlayer = 0;
+			this.players[0].currentTime = 0;
+			this.players[0].play();
 		}
 	}
 }
