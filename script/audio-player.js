@@ -1,4 +1,57 @@
 
+class AmbianceChannel {
+	constructor (src) {
+		this.crossfadeLength = 5.0;
+		this.crossfadeStart = -1;
+
+		this.currentPlayer = 0;
+		this.players = [
+			document.createElement('audio'),
+			document.createElement('audio')
+		];
+
+		this.players[0].src = src;
+		this.players[1].src = src;
+	}
+	get paused () {
+		return this.players[0].paused && this.players[1].paused;
+	}
+	play () {
+		if (this.currentPlayer == 0 || this.players[1].currentTime > this.players[1].duration-this.crossfadeLength) {
+			this.players[0].play();
+		}
+		if (this.currentPlayer == 1 || this.players[0].currentTime > this.players[0].duration-this.crossfadeLength) {
+			this.players[1].play();
+		}
+	}
+	pause () {
+		this.players[0].pause();
+		this.players[1].pause();
+	}
+	tick () {
+		// const primaryPlayer = this.players[this.currentPlayer];
+		// const secondaryPlayer = this.players[this.currentPlayer == 0 ? 1 : 0];
+		// if (primaryPlayer.currentTime < this.crossfadeLength || primaryPlayer.currentTime > primaryPlayer.duration-this.crossfadeLength)
+
+		if (this.players[0].currentTime < this.crossfadeLength) {
+			this.players[0].volume = this.players[0].currentTime / this.crossfadeLength; // fade in
+		} else if (this.players[0].currentTime > this.players[0].duration - this.crossfadeLength) {
+			this.players[0].volume = (this.players[0].duration-this.players[0].currentTime) / this.crossfadeLength; // fade out
+		} else {
+			this.players[0].volume = 1;
+		}
+	}
+}
+
+// class MixBoard {
+// 	constructor () {
+// 		this.channels = [];
+// 	}
+// 	addChannel (audioList = []) {
+// 		//
+// 	}
+// }
+
 class AudioPlayer {
 	constructor (tracklist) {
 		this.player = document.createElement('audio');

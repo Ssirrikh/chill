@@ -16,6 +16,7 @@
 			background-color: #222b28;
 			width: 100vw;
 			height: 100vh;
+			overflow: hidden;
 		}
 		/* first left:__; spacings for original img, top-left to bottom-right flow */
 		/* second left:__; spacings for flipped img, centered top to bottom flow */
@@ -78,10 +79,8 @@
 	let fg = new ParticleSystem(30, SNOW_FG);
 	// let bg = new ParticleSystem(500, RAIN_BG);
 	// let fg = new ParticleSystem(100, RAIN_FG);
-	function render () {
 
-		requestAnimationFrame(render);
-
+	function tickParticles () {
 		// detect tab-out if entire frame dropped; restore state if detected
 		dt = performance.now()-lastFrame;
 		if (dt > MIN_TIMESKIP) {
@@ -94,9 +93,34 @@
 
 		lastFrame = performance.now();
 	}
-	render();
 
-	// ///////////////////
+	//// AUDIO ////
+
+	const WINTER_MUSIC = 'music/' + 'playlist-00/Ever So Blue - Progress.mp3';
+
+	let musicChannel = new AmbianceChannel(WINTER_MUSIC);
+
+	///////////////////
+
+	function animate () {
+
+		requestAnimationFrame(animate);
+
+		// visuals
+		tickParticles();
+		// audio
+		musicChannel.tick();
+
+	}
+	animate();
+
+	document.body.addEventListener('keydown', e => {
+		switch (e.key) {
+		case 'k': // play/pause
+			musicChannel.paused ? musicChannel.play() : musicChannel.pause();
+			break;
+		}
+	});
 
 	// function loadWelcomeScreen (bgImgId = 0) {
 	// 	document.body.innerHTML = '';
