@@ -6,6 +6,82 @@ function randFloat(min, max) {
 	return (Math.random() * (max - min)) + min;
 }
 
+//////////////////
+
+class AudioChannel {
+	constructor (src) {
+		this.player = document.createElement('audio');
+		this.player.src = src;
+	}
+	get volume () { return this.player.volume; }
+	set volume (v) { this.player.volume = v; }
+	get paused () { return this.player.paused; }
+	play () { this.player.play(); }
+	pause () { this.player.pause(); }
+	tick () {}
+}
+class CrossfadeChannel extends AudioChannel {
+	constructor (src, crossfade = 0.0) {
+		super(src);
+
+		this.auxSwitch = false;
+		this.auxPlayer = document.createElement('audio');
+		this.auxPlayer.src = src;
+
+		this.onCrossfade = (player) => {};
+
+		this._volume = 1.0;
+		this._crossfade = crossfade; // in seconds
+	}
+	// override
+	get volume () { return this._volume; }
+	set volume (v) {
+		this._volume = Math.min(Math.max(0,v),1);
+	}
+	get paused () {
+		return this.player.paused && this.auxPlayer.paused;
+	}
+	play () {
+		if (!this.auxSwitch || this.auxPlayer.currentTime > this.auxPlayer.duration-this._crossfade) {
+			this.player.play();
+		}
+		if (this.auxSwitch || this.player.currentTime > this.player.duration-this._crossfade) {
+			this.auxPlayer.play();
+		}
+	}
+	pause () {
+		this.player.pause();
+		this.auxPlayer.pause();
+	}
+	tick () {
+		// lerp volumes during crossfade
+		for (let player of [this.player,this.auxPlayer]) {
+			if (player.currentTime < this._crossfade) {
+				player.volume = this._volume * (player.currentTime / this._crossfade); // fade in at beginning
+			} else if (player.currentTime > player.duration - this._crossfade) {
+				player.volume = this._volume * ((player.duration-player.currentTime) / this._crossfade); // fade out at end
+			} else {
+				player.volume = this._volume * 1.0;
+			}
+		}
+		// try trigger crossfade
+		if (!this.auxSwitch && this.player.currentTime > this.player.duration-this._crossfade && this.auxPlayer.paused) {
+			this.onCrossfade(this.auxPlayer);
+			this.auxSwitch = true;
+			this.auxPlayer.currentTime = 0;
+			this.auxPlayer.play();
+		}
+		if (this.auxSwitch && this.auxPlayer.currentTime > this.auxPlayer.duration-this._crossfade && this.player.paused) {
+			this.onCrossfade(this.player);
+			this.auxSwitch = false;
+			this.player.currentTime = 0;
+			this.player.play();
+		}
+	}
+}
+
+//////////////////////
+
 class LoopChannel {
 	constructor (src, crossfadeLength = 5.0) {
 		this.crossfadeLength = crossfadeLength; // in seconds

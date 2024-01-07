@@ -104,11 +104,15 @@
 	const WINTER_AMBIENCE_WATER = 'sfx/' + 'ambience/Ambience Stream 01.wav';
 	const WINTER_ANIMAL_BIRD = 'sfx/' + 'animal/Animal Bird American Goldfinch Chirp 01.wav';
 
-	let musicChannel = new LoopChannel(WINTER_MUSIC);
-	let ambienceChannelWind = new LoopChannel(WINTER_AMBIENCE_WIND);
-	let ambienceChannelWater = new LoopChannel(WINTER_AMBIENCE_WATER);
+	// let musicChannel = new LoopChannel(WINTER_MUSIC);
+	// let ambienceChannelWind = new LoopChannel(WINTER_AMBIENCE_WIND);
+	// let ambienceChannelWater = new LoopChannel(WINTER_AMBIENCE_WATER);
 
-	let birdChannel = new TriggerChannel(WINTER_ANIMAL_BIRD, 5.0, 2.0);
+	// let birdChannel = new TriggerChannel(WINTER_ANIMAL_BIRD, 5.0, 2.0);
+
+	let musicChannel = new CrossfadeChannel(WINTER_MUSIC, 5.0);
+	let windChannel  = new CrossfadeChannel(WINTER_AMBIENCE_WIND, 3.0);
+	let waterChannel = new CrossfadeChannel(WINTER_AMBIENCE_WATER, 2.0);
 
 	///////////////////
 
@@ -121,8 +125,8 @@
 		clock.tick();
 		// audio
 		musicChannel.tick();
-		ambienceChannelWind.tick();
-		ambienceChannelWater.tick();
+		windChannel.tick();
+		waterChannel.tick();
 		// birdChannel.tick();
 
 	}
@@ -132,8 +136,8 @@
 		switch (e.key) {
 		case 'k': // play/pause
 			musicChannel.paused ? musicChannel.play() : musicChannel.pause();
-			ambienceChannelWind.paused ? ambienceChannelWind.play() : ambienceChannelWind.pause();
-			ambienceChannelWater.paused ? ambienceChannelWater.play() : ambienceChannelWater.pause();
+			windChannel.paused ? windChannel.play() : windChannel.pause();
+			waterChannel.paused ? waterChannel.play() : waterChannel.pause();
 			// birdChannel.paused ? birdChannel.play() : birdChannel.pause();
 			break;
 		}
