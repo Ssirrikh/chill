@@ -57,6 +57,7 @@
 <script type="text/javascript" src="sfx/resources.js"></script>
 
 <script type="text/javascript" src="script/audio-player.js"></script>
+<script type="text/javascript" src="script/clock.js"></script>
 <script type="text/javascript" src="script/particles.js"></script>
 
 <script type="text/javascript">
@@ -68,6 +69,8 @@
 	document.body.innerHTML = '';
 	document.body.style.background = 'url("images/' + WINTER_BG_IMG + '") no-repeat center center fixed';
 	document.body.style.backgroundSize = 'cover';
+
+	let clock = new ClockWidget(document.body);
 
 	//// PARTICLES ////
 
@@ -115,6 +118,7 @@
 
 		// visuals
 		tickParticles();
+		clock.tick();
 		// audio
 		musicChannel.tick();
 		ambienceChannelWind.tick();
