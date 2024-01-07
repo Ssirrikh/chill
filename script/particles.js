@@ -18,10 +18,10 @@ const SNOW_BG = {
 	}
 };
 const SNOW_FG = {
-	size: [5,9], // min,max in px
-	lifetime: [10000,400], // avg,var in ms
-	swayPeriod: [12000,3500], // avg,var in ms
-	swayDist: [50,15], // avg,var in px
+	size: [5,20], // min,max in px
+	lifetime: [1000,400], // avg,var in ms
+	swayPeriod: [2000,500], // avg,var in ms
+	swayDist: [100,15], // avg,var in px
 	newParticleObject: (radius) => {
 		let e = document.createElement('div');
 		e.style.background = 'radial-gradient(#ffffff88,#ffffff00)';

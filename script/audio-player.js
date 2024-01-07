@@ -1,4 +1,11 @@
 
+function randInt(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function randFloat(min, max) {
+	return (Math.random() * (max - min)) + min;
+}
+
 class LoopChannel {
 	constructor (src, crossfadeLength = 5.0) {
 		this.crossfadeLength = crossfadeLength; // in seconds
@@ -49,6 +56,44 @@ class LoopChannel {
 			this.currentPlayer = 0;
 			this.players[0].currentTime = 0;
 			this.players[0].play();
+		}
+	}
+}
+class TriggerChannel {
+	constructor (src, triggerDelayAverage = 2.0, triggerDelayVariance = 1.0) {
+		this.triggerDelayMin = triggerDelayAverage-triggerDelayVariance; // in seconds
+		this.triggerDelayMax = triggerDelayAverage+triggerDelayVariance; // in seconds
+		this.triggerStart = -1;
+		this.triggerDelay = -1;
+
+		this.paused = true;
+		this.player = document.createElement('audio');
+		this.player.src = src;
+	}
+	play () {
+		this.paused = false;
+		if (this.triggerStart == -1) {
+			this.player.play();
+		} else {
+			this.triggerStart = performance.now(); // reset trigger delay if we were paused before firing
+		}
+	}
+	pause () {
+		this.paused = true;
+		this.player.pause();
+	}
+	tick () {
+		if (this.player.currentTime == this.player.duration && this.player.paused) {
+			// set trigger if last sound finished playing
+			this.player.currentTime = 0;
+			this.triggerStart = performance.now();
+			this.triggerDelay = randFloat(this.triggerDelayMin, this.triggerDelayMax);
+			console.log('set trigger ' + this.triggerDelay);
+		} else if (this.triggerStart > -1 && performance.now()-this.triggerStart > this.triggerDelay*1000 && !this.paused) {
+			// fire trigger if delay finished
+			this.triggerStart = -1;
+			this.player.play();
+			console.log('fire trigger');
 		}
 	}
 }

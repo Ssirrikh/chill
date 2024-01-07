@@ -75,8 +75,8 @@
 	let lastFrame = performance.now();
 	let dt;
 
-	let bg = new ParticleSystem(150, SNOW_BG);
-	let fg = new ParticleSystem(30, SNOW_FG);
+	let bg = new ParticleSystem(250, SNOW_BG);
+	let fg = new ParticleSystem(5, SNOW_FG);
 	// let bg = new ParticleSystem(500, RAIN_BG);
 	// let fg = new ParticleSystem(100, RAIN_FG);
 
@@ -97,8 +97,15 @@
 	//// AUDIO ////
 
 	const WINTER_MUSIC = 'music/' + 'playlist-00/Ever So Blue - Progress.mp3';
+	const WINTER_AMBIENCE_WIND = 'sfx/' + 'ambience/Ambience Nature Near Water 01.wav';
+	const WINTER_AMBIENCE_WATER = 'sfx/' + 'ambience/Ambience Stream 01.wav';
+	const WINTER_ANIMAL_BIRD = 'sfx/' + 'animal/Animal Bird American Goldfinch Chirp 01.wav';
 
 	let musicChannel = new LoopChannel(WINTER_MUSIC);
+	let ambienceChannelWind = new LoopChannel(WINTER_AMBIENCE_WIND);
+	let ambienceChannelWater = new LoopChannel(WINTER_AMBIENCE_WATER);
+
+	let birdChannel = new TriggerChannel(WINTER_ANIMAL_BIRD, 5.0, 2.0);
 
 	///////////////////
 
@@ -110,6 +117,9 @@
 		tickParticles();
 		// audio
 		musicChannel.tick();
+		ambienceChannelWind.tick();
+		ambienceChannelWater.tick();
+		// birdChannel.tick();
 
 	}
 	animate();
@@ -118,6 +128,9 @@
 		switch (e.key) {
 		case 'k': // play/pause
 			musicChannel.paused ? musicChannel.play() : musicChannel.pause();
+			ambienceChannelWind.paused ? ambienceChannelWind.play() : ambienceChannelWind.pause();
+			ambienceChannelWater.paused ? ambienceChannelWater.play() : ambienceChannelWater.pause();
+			// birdChannel.paused ? birdChannel.play() : birdChannel.pause();
 			break;
 		}
 	});
