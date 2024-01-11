@@ -57,8 +57,8 @@
 <script type="text/javascript" src="sfx/resources.js"></script>
 
 <script type="text/javascript" src="script/audio-player.js"></script>
-<script type="text/javascript" src="script/clock.js"></script>
 <script type="text/javascript" src="script/particles.js"></script>
+<script type="text/javascript" src="script/widget.js"></script>
 
 <script type="text/javascript">
 
@@ -113,6 +113,10 @@
 	let musicChannel = new CrossfadeChannel(WINTER_MUSIC, 5.0);
 	let windChannel  = new CrossfadeChannel(WINTER_AMBIENCE_WIND, 3.0);
 	let waterChannel = new CrossfadeChannel(WINTER_AMBIENCE_WATER, 2.0);
+
+	let musicWidget = new AudioChannelWidget(musicChannel);
+	// musicWidget.domElement.style.left = musicWidget.domElement.style.top = '10vw';
+	document.body.appendChild(musicWidget.domElement);
 
 	///////////////////
 
