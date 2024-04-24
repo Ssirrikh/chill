@@ -62,41 +62,70 @@
 
 <script type="text/javascript">
 
-	//// BACKGROUND IMAGE ////
+	//// SETTINGS AND PRESETS ////
 
-	const WINTER_BG_IMG = 'winter/Roberto Nickson - Montana River.png';
+	let particles = {
+		bg: undefined,
+		fg: undefined
+	};
+	let soundscape = {
+		//
+	};
 
-	document.body.innerHTML = '';
-	document.body.style.background = 'url("images/' + WINTER_BG_IMG + '") no-repeat center center fixed';
-	document.body.style.backgroundSize = 'cover';
+	const PRESETS = [
+		{ bgColor: "#a8b56a", textColor: "", image: "Sergio Grana - Abandoned Train - Artstation D5klDR.jpg", particles: [] },
+		{ bgColor: "#233e52", textColor: "", image: "winter/Roberto Nickson - Montana River.png", particles: [new ParticleSystem(250, SNOW_BG),new ParticleSystem(5, SNOW_FG)] },
+		{ bgColor: "#233e52", textColor: "", image: "Tyler Smith - Rain Storm - ArtStation A9oQeX.jpg", particles: [new ParticleSystem(500, RAIN_BG),new ParticleSystem(100, RAIN_FG)] },
+	];
+
+	function loadPreset (id) {
+		const preset = PRESETS[id];
+		// document.body.innerHTML = '';
+
+		// background image
+		document.body.style.background = 'url("images/' + preset.image + '") no-repeat center center fixed, ' + preset.bgColor;
+		document.body.style.backgroundSize = 'cover';
+		// particle systems
+		if (particles.bg) particles.bg.detach();
+		if (particles.fg) particles.fg.detach();
+		particles.bg = preset.particles[0] ?? undefined;
+		particles.fg = preset.particles[1] ?? undefined;
+		if (particles.bg) particles.bg.attach();
+		if (particles.fg) particles.fg.attach();
+	}
+
+
+
+	//// INIT ////
+
+	loadPreset(1); // winter river
 
 	let clock = new ClockWidget(document.body);
 
-	//// PARTICLES ////
+
+
+	//// PARTICLE UPDATES ////
 
 	const MIN_TIMESKIP = 2 * (1000/60); // if we miss an entire frame @ 60 fps, correct for it
 	let lastFrame = performance.now();
 	let dt;
 
-	let bg = new ParticleSystem(250, SNOW_BG);
-	let fg = new ParticleSystem(5, SNOW_FG);
-	// let bg = new ParticleSystem(500, RAIN_BG);
-	// let fg = new ParticleSystem(100, RAIN_FG);
-
 	function tickParticles () {
 		// detect tab-out if entire frame dropped; restore state if detected
 		dt = performance.now()-lastFrame;
 		if (dt > MIN_TIMESKIP) {
-			bg.correctTimeskip(dt);
-			fg.correctTimeskip(dt);
+			if (particles.bg) particles.bg.correctTimeskip(dt);
+			if (particles.fg) particles.fg.correctTimeskip(dt);
 		}
 
-		bg.update();
-		fg.update();
+		if (particles.bg) particles.bg.update();
+		if (particles.fg) particles.fg.update();
 
 		lastFrame = performance.now();
 	}
 
+
+	
 	//// AUDIO ////
 
 	const WINTER_MUSIC = 'music/' + 'playlist-00/Ever So Blue - Progress.mp3';
@@ -116,7 +145,7 @@
 
 	let musicWidget = new AudioChannelWidget(musicChannel);
 	// musicWidget.domElement.style.left = musicWidget.domElement.style.top = '10vw';
-	document.body.appendChild(musicWidget.domElement);
+	// document.body.appendChild(musicWidget.domElement);
 
 	///////////////////
 
@@ -136,8 +165,14 @@
 	}
 	animate();
 
-	document.body.addEventListener('keydown', e => {
+	window.addEventListener('keydown', e => {
+		console.log(e.key);
 		switch (e.key) {
+		// load presets
+		case '1': console.log('load preset 1...'); loadPreset(0); break;
+		case '2': console.log('load preset 2...'); loadPreset(1); break;
+		case '3': console.log('load preset 3...'); loadPreset(2); break;
+		// audio controls
 		case 'k': // play/pause
 			musicChannel.paused ? musicChannel.play() : musicChannel.pause();
 			windChannel.paused ? windChannel.play() : windChannel.pause();

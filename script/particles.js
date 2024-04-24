@@ -101,12 +101,21 @@ class ParticleSystem {
 		// this.particles = [];
 		// for (let i = 0; i < numParticles; i++)
 		// 	this.particles.push( new Particle(settings) );
+		this.settings = settings;
 		this.particles = Array.from({ length: numParticles }, () => new Particle(settings));
+		// this.attach();
+	}
+	attach () {
 		for (let particle of this.particles) {
 			particle.init();
 			particle.animStart += randInt(0,particle.lifetime); // spread out initial spawns over time
-			particle.domElement = settings.newParticleObject(particle.radius);
+			particle.domElement = this.settings.newParticleObject(particle.radius);
 			document.body.appendChild(particle.domElement);
+		}
+	}
+	detach () {
+		for (let particle of this.particles) {
+			document.body.removeChild(particle.domElement);
 		}
 	}
 	update () {
