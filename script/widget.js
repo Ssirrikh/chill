@@ -1,4 +1,43 @@
 
+class Widget {
+	constructor (parent = document.body) {
+		this.parent = parent;
+
+		this.domElement = document.createElement('div');
+		this.domElement.style.display = 'inline-block';
+		this.domElement.style.position = 'absolute';
+		this.domElement.style.transform = 'translate(-50%,-50%)';
+
+		this.anchor = document.createElement('div');
+		this.anchor.style.backgroundColor = '#ff0000';
+		this.anchor.style.display = 'inline-block';
+		this.anchor.style.position = 'absolute';
+		this.anchor.style.width = this.anchor.style.height = '6px';
+		this.anchor.style.borderRadius = '50%';
+
+		this.setPos('50%','50%');
+		this.attach();
+	}
+	get top () { return this.domElement.style.top; }
+	set top (y) { this.setPos(this.left, y??this.top); }
+	get left () { return this.domElement.style.left; }
+	set left (x) { this.setPos(x??this.left, this.top); }
+	setPos (x,y) {
+		this.domElement.style.left = this.anchor.style.left = x;
+		this.domElement.style.top = this.anchor.style.top = y;
+	}
+	attach (parent) {
+		this.parent = parent ?? this.parent ?? document.body;
+		this.parent.appendChild(this.domElement);
+		this.parent.appendChild(this.anchor);
+	}
+	detach () {
+		this.parent.removeChild(this.domElement);
+		this.parent.removeChild(this.anchor);
+	}
+	tick () {}
+}
+
 class ClockWidget {
 	constructor (parent = document.body) {
 		const dateTest = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));

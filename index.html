@@ -64,18 +64,27 @@
 
 	//// SETTINGS AND PRESETS ////
 
+	const MIN_TIMESKIP = 2 * (1000/60); // if we miss an entire frame @ 60 fps, correct for it
+	let update = {
+		lastframe: performance.now(),
+		dt: undefined
+	};
+
+	const SNOW_PARTICLES = [new ParticleSystem(250, SNOW_BG),new ParticleSystem(5, SNOW_FG)];
+	const RAIN_PARTICLES = [new ParticleSystem(500, RAIN_BG),new ParticleSystem(100, RAIN_FG)];
 	let particles = {
 		bg: undefined,
 		fg: undefined
 	};
+	
 	let soundscape = {
 		//
 	};
 
 	const PRESETS = [
 		{ bgColor: "#a8b56a", textColor: "", image: "Sergio Grana - Abandoned Train - Artstation D5klDR.jpg", particles: [] },
-		{ bgColor: "#233e52", textColor: "", image: "winter/Roberto Nickson - Montana River.png", particles: [new ParticleSystem(250, SNOW_BG),new ParticleSystem(5, SNOW_FG)] },
-		{ bgColor: "#233e52", textColor: "", image: "Tyler Smith - Rain Storm - ArtStation A9oQeX.jpg", particles: [new ParticleSystem(500, RAIN_BG),new ParticleSystem(100, RAIN_FG)] },
+		{ bgColor: "#233e52", textColor: "", image: "winter/Roberto Nickson - Montana River.png", particles: SNOW_PARTICLES },
+		{ bgColor: "#233e52", textColor: "", image: "Tyler Smith - Rain Storm - ArtStation A9oQeX.jpg", particles: RAIN_PARTICLES },
 	];
 
 	function loadPreset (id) {
@@ -102,27 +111,17 @@
 
 	let clock = new ClockWidget(document.body);
 
+	let testWidget = new Widget(document.body);
+
 
 
 	//// PARTICLE UPDATES ////
 
-	const MIN_TIMESKIP = 2 * (1000/60); // if we miss an entire frame @ 60 fps, correct for it
-	let lastFrame = performance.now();
-	let dt;
+	
+	// let lastFrame = performance.now();
+	// let dt;
 
-	function tickParticles () {
-		// detect tab-out if entire frame dropped; restore state if detected
-		dt = performance.now()-lastFrame;
-		if (dt > MIN_TIMESKIP) {
-			if (particles.bg) particles.bg.correctTimeskip(dt);
-			if (particles.fg) particles.fg.correctTimeskip(dt);
-		}
-
-		if (particles.bg) particles.bg.update();
-		if (particles.fg) particles.fg.update();
-
-		lastFrame = performance.now();
-	}
+	
 
 
 	
@@ -148,6 +147,22 @@
 	// document.body.appendChild(musicWidget.domElement);
 
 	///////////////////
+
+	//// UPDATE ////
+
+	function tickParticles () {
+		// detect tab-out if entire frame dropped; restore state if detected
+		update.dt = performance.now()-update.lastFrame;
+		if (update.dt > MIN_TIMESKIP) {
+			if (particles.bg) particles.bg.correctTimeskip(update.dt);
+			if (particles.fg) particles.fg.correctTimeskip(update.dt);
+		}
+
+		if (particles.bg) particles.bg.update();
+		if (particles.fg) particles.fg.update();
+
+		update.lastFrame = performance.now();
+	}
 
 	function animate () {
 
