@@ -72,6 +72,7 @@
 
 	const SNOW_PARTICLES = [new ParticleSystem(250, SNOW_BG),new ParticleSystem(5, SNOW_FG)];
 	const RAIN_PARTICLES = [new ParticleSystem(500, RAIN_BG),new ParticleSystem(100, RAIN_FG)];
+	const DUST_PARTICLES = [new ParticleSystem(60, DUST_BG),new ParticleSystem(40, DUST_FG)];
 	let particles = {
 		bg: undefined,
 		fg: undefined
@@ -82,7 +83,7 @@
 	};
 
 	const PRESETS = [
-		{ bgColor: "#a8b56a", textColor: "", image: "Sergio Grana - Abandoned Train - Artstation D5klDR.jpg", particles: [] },
+		{ bgColor: "#a8b56a", textColor: "", image: "Sergio Grana - Abandoned Train - Artstation D5klDR.jpg", particles: DUST_PARTICLES },
 		{ bgColor: "#233e52", textColor: "", image: "winter/Roberto Nickson - Montana River.png", particles: SNOW_PARTICLES },
 		{ bgColor: "#233e52", textColor: "", image: "Tyler Smith - Rain Storm - ArtStation A9oQeX.jpg", particles: RAIN_PARTICLES },
 	];
@@ -107,7 +108,7 @@
 
 	//// INIT ////
 
-	loadPreset(1); // winter river
+	loadPreset(0); // winter river
 
 	let clock = new ClockWidget(document.body);
 

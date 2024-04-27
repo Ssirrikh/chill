@@ -61,6 +61,34 @@ const RAIN_FG = {
 		return e;
 	}
 };
+const DUST_BG = {
+	size: [1,1], // min,max in px
+	lifetime: [30000,1500], // avg,var in ms
+	swayPeriod: [100000,50000], // avg,var in ms
+	swayDist: [100,50], // avg,var in px
+	newParticleObject: (width) => {
+		let e = document.createElement('div');
+		e.style.background = '#fcefca';
+		e.style.borderRadius = '50%';
+		e.style.width = e.style.height = width + 'px';
+		e.style.position = 'absolute';
+		return e;
+	}
+};
+const DUST_FG = {
+	size: [3,6], // min,max in px
+	lifetime: [45000,1500], // avg,var in ms
+	swayPeriod: [100000,50000], // avg,var in ms
+	swayDist: [100,50], // avg,var in px
+	newParticleObject: (width) => {
+		let e = document.createElement('div');
+		e.style.background = 'radial-gradient(#fcefca66,#fcefca00)';
+		e.style.borderRadius = '50%';
+		e.style.width = e.style.height = width + 'px';
+		e.style.position = 'absolute';
+		return e;
+	}
+};
 
 class Particle {
 	constructor (settings) {
@@ -73,8 +101,8 @@ class Particle {
 	get progress () { return (performance.now()-this.animStart) / this.lifetime; }
 	get x () {
 		const swayProgress = ((performance.now()-this.animStart) % this.swayPeriod) / this.swayPeriod;
-		return this.centerX;
-		// return this.centerX + this.swayDist*Math.sin(2*Math.PI * swayProgress);
+		// return this.centerX;
+		return this.centerX + this.swayDist*Math.sin(2*Math.PI * swayProgress);
 	}
 	get y () {
 		// animHeight*animProgress - particleSize
