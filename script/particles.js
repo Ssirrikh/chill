@@ -6,7 +6,7 @@ function randInt(min, max) {
 const SNOW_BG = {
 	size: [1,2], // min,max in px
 	lifetime: [7500,1500], // avg,var in ms
-	swayPeriod: [9000,1500], // avg,var in ms
+	swayPeriod: [20000,1500], // avg,var in ms
 	swayDist: [50,15], // avg,var in px
 	newParticleObject: (radius) => {
 		let e = document.createElement('div');
@@ -20,7 +20,7 @@ const SNOW_BG = {
 const SNOW_FG = {
 	size: [5,20], // min,max in px
 	lifetime: [1000,400], // avg,var in ms
-	swayPeriod: [2000,500], // avg,var in ms
+	swayPeriod: [3000,1000], // avg,var in ms
 	swayDist: [100,15], // avg,var in px
 	newParticleObject: (radius) => {
 		let e = document.createElement('div');

@@ -16,7 +16,8 @@ class Widget {
 		this.anchor.style.borderRadius = '50%';
 
 		this.setPos('50%','50%');
-		this.attach();
+		this.hideAnchor();
+		// this.attach();
 	}
 	get top () { return this.domElement.style.top; }
 	set top (y) { this.setPos(this.left, y??this.top); }
@@ -25,6 +26,12 @@ class Widget {
 	setPos (x,y) {
 		this.domElement.style.left = this.anchor.style.left = x;
 		this.domElement.style.top = this.anchor.style.top = y;
+	}
+	showAnchor () {
+		this.anchor.style.visibility = 'visible';
+	}
+	hideAnchor () {
+		this.anchor.style.visibility = 'hidden';
 	}
 	attach (parent) {
 		this.parent = parent ?? this.parent ?? document.body;
@@ -38,8 +45,10 @@ class Widget {
 	tick () {}
 }
 
-class ClockWidget {
+class ClockWidget extends Widget {
 	constructor (parent = document.body) {
+		super(parent);
+
 		const dateTest = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
 		// const dateStringTest = dateTest.toLocaleTimeString();
 		// console.log(dateStringTest);
@@ -47,15 +56,8 @@ class ClockWidget {
 		// this.isTwelveHour = !!(dateStringTest.match(/am|pm/i) || dateTest.toString().match(/am|pm/i) );
 		this.isTwelveHour = !!( dateTest.toString().match(/am|pm/i) );
 
-		this.domElement = document.createElement('div');
 		this.domElement.style.color = '#ffffff';
-		this.domElement.style.position = 'absolute';
-		this.domElement.style.top = '80%';
-		this.domElement.style.left = '50%';
-		this.domElement.style.transform = 'translate(-50%,-50%)';
 		this.domElement.style.font = '5vw Helvetica';
-
-		parent.appendChild(this.domElement);
 	}
 	tick () {
 		const d = new Date();
@@ -65,6 +67,34 @@ class ClockWidget {
 		this.domElement.innerHTML = hh + ':' + ss + a;
 	}
 }
+
+// class ClockWidget {
+// 	constructor (parent = document.body) {
+// 		const dateTest = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
+// 		// const dateStringTest = dateTest.toLocaleTimeString();
+// 		// console.log(dateStringTest);
+// 		// console.log(dateTest.toString());
+// 		// this.isTwelveHour = !!(dateStringTest.match(/am|pm/i) || dateTest.toString().match(/am|pm/i) );
+// 		this.isTwelveHour = !!( dateTest.toString().match(/am|pm/i) );
+
+// 		this.domElement = document.createElement('div');
+// 		this.domElement.style.color = '#ffffff';
+// 		this.domElement.style.position = 'absolute';
+// 		this.domElement.style.top = '80%';
+// 		this.domElement.style.left = '50%';
+// 		this.domElement.style.transform = 'translate(-50%,-50%)';
+// 		this.domElement.style.font = '5vw Helvetica';
+
+// 		parent.appendChild(this.domElement);
+// 	}
+// 	tick () {
+// 		const d = new Date();
+// 		const hh = this.isTwelveHour ? (d.getHours()%12) : String(d.getHours()).padStart(2,'0');
+// 		const ss = String( d.getMinutes() ).padStart(2,'0');
+// 		const a = this.isTwelveHour ? (d.getHours()>12 ? ' pm' : ' am') : '';
+// 		this.domElement.innerHTML = hh + ':' + ss + a;
+// 	}
+// }
 
 class AudioChannelWidget {
 	constructor (channel, label = 'Untitled') {

@@ -82,10 +82,32 @@
 		//
 	};
 
+	let widgets = [
+		//
+	];
+
 	const PRESETS = [
-		{ bgColor: "#a8b56a", textColor: "", image: "Sergio Grana - Abandoned Train - Artstation D5klDR.jpg", particles: DUST_PARTICLES },
-		{ bgColor: "#233e52", textColor: "", image: "winter/Roberto Nickson - Montana River.png", particles: SNOW_PARTICLES },
-		{ bgColor: "#233e52", textColor: "", image: "Tyler Smith - Rain Storm - ArtStation A9oQeX.jpg", particles: RAIN_PARTICLES },
+		{
+			bgColor: "#a8b56a",
+			textColor: "",
+			image: "Sergio Grana - Abandoned Train - Artstation D5klDR.jpg",
+			particles: DUST_PARTICLES,
+			widgets: [[ClockWidget,'50%','50%']]
+		},
+		{
+			bgColor: "#233e52",
+			textColor: "",
+			image: "winter/Roberto Nickson - Montana River.png",
+			particles: SNOW_PARTICLES,
+			widgets: [[ClockWidget,'50%','80%']]
+		},
+		{
+			bgColor: "#233e52",
+			textColor: "",
+			image: "Tyler Smith - Rain Storm - ArtStation A9oQeX.jpg",
+			particles: RAIN_PARTICLES,
+			widgets: [[ClockWidget,'50%','25%']]
+		}
 	];
 
 	function loadPreset (id) {
@@ -102,17 +124,22 @@
 		particles.fg = preset.particles[1] ?? undefined;
 		if (particles.bg) particles.bg.attach();
 		if (particles.fg) particles.fg.attach();
+		// widgets
+		for (let widget of widgets) widget.detach();
+		widgets = [];
+		for (let [widget,left,top] of preset.widgets) {
+			let newWidget = new widget;
+			newWidget.setPos(left,top);
+			newWidget.attach(document.body);
+			widgets.push(newWidget);
+		}
 	}
 
 
 
 	//// INIT ////
 
-	loadPreset(0); // winter river
-
-	let clock = new ClockWidget(document.body);
-
-	let testWidget = new Widget(document.body);
+	loadPreset(0);
 
 
 
@@ -171,7 +198,7 @@
 
 		// visuals
 		tickParticles();
-		clock.tick();
+		for (let widget of widgets) widget.tick();
 		// audio
 		musicChannel.tick();
 		windChannel.tick();
