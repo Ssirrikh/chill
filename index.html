@@ -48,6 +48,26 @@
 			font-size: 2vw;
 			filter: drop-shadow(0 0 1px #444);
 		}
+
+		.top-left-text {
+			position: absolute;
+			top: 1vw;
+			left: 1vw;
+			font-size: 1.0vw;
+			filter: drop-shadow(0 0 1px #444);
+		}
+		.hidden {
+			visibility: hidden;
+		}
+
+		@keyframes fadeIn {
+			0%   { opacity: 0.0; }
+			100% { opacity: 1.0; }
+		}
+		@keyframes fadeOut {
+			0%   { opacity: 1.0; }
+			100% { opacity: 0.0; }
+		}
 	</style>
 </head>
 <body>
@@ -63,6 +83,25 @@
 <script type="text/javascript">
 
 	//// SETTINGS AND PRESETS ////
+
+	const CONTROLS_TEXT = [
+		'[1] Abandoned Train Preset',
+		'[2] River Snowfall Preset',
+		'[3] Stormy Shores Preset',
+		'',
+		'[f] to enter/exit fullscreen'//,
+		// '',
+		// '[t] to start timer (WIP)',
+		// '[s] to start stopwatch (WIP)',
+		// '[k] to play/pause audio (experimental)'
+	];
+
+	const HUD_FADE_TIMER = 4000; // in ms
+	const HUD_FADE_DURATION = 2000; // in ms
+	let lastCursorMove = performance.now();
+
+	let isFullscreen = false;
+	let isShowingControls = true;
 
 	const MIN_TIMESKIP = 2 * (1000/60); // if we miss an entire frame @ 60 fps, correct for it
 	let update = {
@@ -141,6 +180,11 @@
 
 	loadPreset(0);
 
+	let controlsText = document.createElement('div');
+	controlsText.classList.add('top-left-text');
+	controlsText.innerHTML = CONTROLS_TEXT.join('\n');
+	document.body.appendChild(controlsText);
+
 
 
 	//// PARTICLE UPDATES ////
@@ -178,6 +222,17 @@
 
 	//// UPDATE ////
 
+	function toggleControls () {
+		if (isShowingControls) {
+			controlsText.style.opacity = '0';
+			controlsText.style.animation = 'fadeOut 2s';
+		} else {
+			controlsText.style.opacity = '1';
+			controlsText.style.animation = 'fadeIn 2s';
+		}
+		isShowingControls = !isShowingControls;
+	}
+
 	function tickParticles () {
 		// detect tab-out if entire frame dropped; restore state if detected
 		update.dt = performance.now()-update.lastFrame;
@@ -191,6 +246,9 @@
 
 		update.lastFrame = performance.now();
 	}
+	function tickHUD () {
+
+	}
 
 	function animate () {
 
@@ -199,6 +257,8 @@
 		// visuals
 		tickParticles();
 		for (let widget of widgets) widget.tick();
+		// HUD
+		if (isShowingControls && (performance.now()-lastCursorMove) > HUD_FADE_TIMER) toggleControls();
 		// audio
 		musicChannel.tick();
 		windChannel.tick();
@@ -208,6 +268,12 @@
 	}
 	animate();
 
+
+
+	window.addEventListener('mousemove', e => {
+		if (!isShowingControls) toggleControls();
+		lastCursorMove = performance.now();
+	});
 	window.addEventListener('keydown', e => {
 		console.log(e.key);
 		switch (e.key) {
@@ -215,6 +281,15 @@
 		case '1': console.log('load preset 1...'); loadPreset(0); break;
 		case '2': console.log('load preset 2...'); loadPreset(1); break;
 		case '3': console.log('load preset 3...'); loadPreset(2); break;
+		// fullscreen
+		case 'f':
+			(isFullscreen) ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+			isFullscreen = !isFullscreen;
+			break;
+		// controls text
+		case 'c':
+			toggleControls();
+			break;
 		// audio controls
 		case 'k': // play/pause
 			musicChannel.paused ? musicChannel.play() : musicChannel.pause();
