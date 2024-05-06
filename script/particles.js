@@ -101,8 +101,8 @@ class Particle {
 	get progress () { return (performance.now()-this.animStart) / this.lifetime; }
 	get x () {
 		const swayProgress = ((performance.now()-this.animStart) % this.swayPeriod) / this.swayPeriod;
-		// return this.centerX;
-		return this.centerX + this.swayDist*Math.sin(2*Math.PI * swayProgress);
+		return this.centerX;
+		// return this.centerX + this.swayDist*Math.sin(2*Math.PI * swayProgress);
 	}
 	get y () {
 		// animHeight*animProgress - particleSize
