@@ -295,8 +295,13 @@
 		case '3': console.log('load preset 3...'); loadPreset(2); break;
 		// fullscreen
 		case 'f':
-			(isFullscreen) ? document.exitFullscreen() : document.documentElement.requestFullscreen();
-			isFullscreen = !isFullscreen;
+            if (isFullscreen && document.fullscreenElement) {
+                document.exitFullscreen();
+                isFullscreen = false;
+            } else if (!isFullscreen && !document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                isFullscreen = true;
+            }
 			break;
 		// controls text
 		case 'c':
